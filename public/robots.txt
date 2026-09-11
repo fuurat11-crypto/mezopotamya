@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-# Die Sitemap-URL wird nach Festlegung der verifizierten Produktivdomain ergänzt.
+Sitemap: https://www.mezopotamya-bestattungen.de/sitemap.xml
