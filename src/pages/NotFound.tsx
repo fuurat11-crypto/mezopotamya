@@ -1,27 +1,6 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Seo } from "@/components/Seo";
 
-const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname,
-    );
-  }, [location.pathname]);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
-      </div>
-    </div>
-  );
-};
-
-export default NotFound;
+export default function NotFound() {
+  return <><Seo title="Seite nicht gefunden" description="Die angeforderte Seite konnte nicht gefunden werden." /><section className="site-container flex min-h-[60vh] items-center justify-center py-20"><div className="max-w-xl text-center"><p className="eyebrow">Fehler 404</p><h1 className="display-title">Diese Seite wurde nicht gefunden.</h1><p className="body-large mt-5">Vielleicht wurde der Link geändert. Über die Startseite erreichen Sie alle wichtigen Informationen und unseren 24h-Kontakt.</p><Link className="btn-primary mt-8" to="/">Zur Startseite</Link></div></section></>;
+}

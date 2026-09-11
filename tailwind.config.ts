@@ -24,6 +24,11 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        brand: "hsl(var(--brand))",
+        ink: "hsl(var(--ink))",
+        sand: "hsl(var(--sand))",
+        ivory: "hsl(var(--ivory))",
+        bronze: "hsl(var(--bronze))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
