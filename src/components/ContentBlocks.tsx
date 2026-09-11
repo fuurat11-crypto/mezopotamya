@@ -1,7 +1,7 @@
 import { FormEvent, ReactNode, useState } from "react";
-import { Link } from "react-router-dom";
 import { ArrowRight, Check, ChevronRight, MessageCircle, Phone, Send } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Link, useI18n } from "@/i18n/I18n";
 import { EMAIL, PHONE_LINK, WHATSAPP_LINK } from "./SiteLayout";
 
 export function Breadcrumbs({ current }: { current: string }) {
@@ -36,11 +36,12 @@ export function FinalCta() {
 
 export function InquiryForm({ compact = false }: { compact?: boolean }) {
   const [sent, setSent] = useState(false);
+  const { t } = useI18n();
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const subject = encodeURIComponent(`Anfrage Mezopotamya – ${data.get('zielland') || 'Kontakt'}`);
-    const body = encodeURIComponent(`Name: ${data.get('name')}\nTelefon: ${data.get('telefon')}\nE-Mail: ${data.get('email')}\nZielland: ${data.get('zielland')}\n\nNachricht:\n${data.get('nachricht')}`);
+    const subject = encodeURIComponent(`${t("Anfrage")} Mezopotamya – ${data.get('zielland') || t('Kontakt')}`);
+    const body = encodeURIComponent(`${t("Name")}: ${data.get('name')}\n${t("Telefon")}: ${data.get('telefon')}\nE-Mail: ${data.get('email')}\n${t("Zielland")}: ${data.get('zielland')}\n\n${t("Nachricht")}:\n${data.get('nachricht')}`);
     setSent(true);
     window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
   };

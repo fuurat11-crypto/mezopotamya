@@ -4,52 +4,42 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { SiteLayout } from "./components/SiteLayout";
+import { I18nProvider } from "./i18n/I18n";
 import Index from "./pages/Index";
-import {
-  AboutPage,
-  ContactPage,
-  CountryPage,
-  EmergencyPage,
-  FaqPage,
-  GuidePage,
-  IslamicPage,
-  KurdishPage,
-  LegalPage,
-  ServiceDetailPage,
-  ServicesPage,
-  TransfersPage,
-} from "./pages/ContentPages";
+import { AboutPage, ContactPage, CountryPage, EmergencyPage, FaqPage, GuidePage, IslamicPage, KurdishPage, LegalPage, ServiceDetailPage, ServicesPage, TransfersPage } from "./pages/ContentPages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+const pages = [
+  { index: true, element: <Index /> },
+  { path: "im-todesfall", element: <EmergencyPage /> },
+  { path: "leistungen", element: <ServicesPage /> },
+  { path: "leistungen/:slug", element: <ServiceDetailPage /> },
+  { path: "internationale-ueberfuehrungen", element: <TransfersPage /> },
+  { path: "ueberfuehrung-tuerkei", element: <CountryPage country="turkey" /> },
+  { path: "ueberfuehrung-irak-kurdistan", element: <CountryPage country="iraq" /> },
+  { path: "ueberfuehrung-syrien", element: <CountryPage country="syria" /> },
+  { path: "islamische-bestattung", element: <IslamicPage /> },
+  { path: "kurdische-bestattung", element: <KurdishPage /> },
+  { path: "ueber-uns", element: <AboutPage /> },
+  { path: "faq", element: <FaqPage /> },
+  { path: "kontakt", element: <ContactPage /> },
+  { path: "ratgeber", element: <GuidePage /> },
+  { path: "impressum", element: <LegalPage type="impressum" /> },
+  { path: "datenschutz", element: <LegalPage type="datenschutz" /> },
+  { path: "*", element: <NotFound /> },
+];
+
+function LocalizedRoutes() {
+  return <Routes>{["/", "/tr", "/ku"].map((prefix) => <Route key={prefix} path={prefix} element={<SiteLayout />}>{pages.map((page, index) => page.index ? <Route key={index} index element={page.element} /> : <Route key={page.path} path={page.path} element={page.element} />)}</Route>)}</Routes>;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
+      <Toaster /><Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route element={<SiteLayout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/im-todesfall" element={<EmergencyPage />} />
-            <Route path="/leistungen" element={<ServicesPage />} />
-            <Route path="/leistungen/:slug" element={<ServiceDetailPage />} />
-            <Route path="/internationale-ueberfuehrungen" element={<TransfersPage />} />
-            <Route path="/ueberfuehrung-tuerkei" element={<CountryPage country="turkey" />} />
-            <Route path="/ueberfuehrung-irak-kurdistan" element={<CountryPage country="iraq" />} />
-            <Route path="/ueberfuehrung-syrien" element={<CountryPage country="syria" />} />
-            <Route path="/islamische-bestattung" element={<IslamicPage />} />
-            <Route path="/kurdische-bestattung" element={<KurdishPage />} />
-            <Route path="/ueber-uns" element={<AboutPage />} />
-            <Route path="/faq" element={<FaqPage />} />
-            <Route path="/kontakt" element={<ContactPage />} />
-            <Route path="/ratgeber" element={<GuidePage />} />
-            <Route path="/impressum" element={<LegalPage type="impressum" />} />
-            <Route path="/datenschutz" element={<LegalPage type="datenschutz" />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
+        <I18nProvider><LocalizedRoutes /></I18nProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

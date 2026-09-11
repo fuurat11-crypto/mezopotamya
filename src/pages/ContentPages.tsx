@@ -1,10 +1,11 @@
 import type { ReactElement } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Building2, CheckCircle2, FileCheck2, Globe2, HeartHandshake, Mail, MapPin, MessageCircle, MoonStar, Phone, Plane, ScrollText, Truck, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Breadcrumbs, ContactActions, FaqItem, FaqList, FinalCta, InquiryForm, LinkCard, PageHero, Steps } from "@/components/ContentBlocks";
 import { businessSchema, Seo } from "@/components/Seo";
 import { EMAIL, PHONE_DISPLAY, PHONE_LINK, WHATSAPP_LINK } from "@/components/SiteLayout";
+import { Link } from "@/i18n/I18n";
 
 const standardSteps = [
   { title: "Todesfall melden & beraten lassen", text: "Wir erfassen Sterbeort, Zielort, familiäre Wünsche und die aktuelle Situation." },

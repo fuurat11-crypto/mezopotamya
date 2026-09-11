@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
 import { ArrowRight, Building2, FileCheck2, Globe2, HandHeart, HeartHandshake, MessageCircle, MoonStar, Phone, Plane, ScrollText, ShieldCheck, Truck, Users } from "lucide-react";
 import { ContactActions, FinalCta, LinkCard, TrustStrip } from "@/components/ContentBlocks";
 import { businessSchema, Seo } from "@/components/Seo";
 import { PHONE_LINK } from "@/components/SiteLayout";
+import { Link } from "@/i18n/I18n";
 
 const services = [
   ["Internationale Überführungen", "Von der Abholung über Formalitäten und Transport bis zur Übergabe am Zielort.", "/internationale-ueberfuehrungen", <Globe2 />],

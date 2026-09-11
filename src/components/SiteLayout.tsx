@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { ChevronDown, Clock3, Mail, MapPin, Menu, MessageCircle, Phone, X } from "lucide-react";
+import { Language, Link, NavLink, TranslationLayer, useI18n } from "@/i18n/I18n";
 
 export const PHONE_DISPLAY = "0176 81009006";
 export const PHONE_LINK = "+4917681009006";
@@ -20,22 +21,15 @@ const nav = [
 ];
 
 function LanguageSwitch() {
-  const [notice, setNotice] = useState("");
-  const choose = (language: string) => {
-    if (language !== "DE") {
-      setNotice(`${language}: Inhalte werden derzeit redaktionell vorbereitet.`);
-      window.setTimeout(() => setNotice(""), 3500);
-    }
-  };
-
+  const { language, switchLanguage } = useI18n();
+  const options: { code: Language; label: string }[] = [{ code: "de", label: "DE" }, { code: "tr", label: "TR" }, { code: "ku", label: "KU" }];
   return (
     <div className="relative flex items-center gap-1 text-xs font-semibold tracking-widest" aria-label="Sprachauswahl">
-      {['DE', 'TR', 'KU'].map((language) => (
-        <button key={language} onClick={() => choose(language)} className={`rounded-full px-2.5 py-2 transition ${language === 'DE' ? 'bg-brand text-white' : 'text-stone-600 hover:bg-sand'}`} aria-current={language === 'DE' ? 'true' : undefined}>
-          {language}
+      {options.map((option) => (
+        <button key={option.code} onClick={() => switchLanguage(option.code)} className={`rounded-full px-2.5 py-2 transition ${language === option.code ? 'bg-brand text-white' : 'text-stone-600 hover:bg-sand'}`} aria-current={language === option.code ? 'true' : undefined} lang={option.code}>
+          {option.label}
         </button>
       ))}
-      {notice && <div role="status" className="absolute right-0 top-11 z-50 w-64 rounded-2xl border border-stone-200 bg-white p-3 text-left text-xs font-normal normal-case tracking-normal text-stone-700 shadow-xl">{notice}</div>}
     </div>
   );
 }
@@ -54,7 +48,7 @@ export function SiteLayout() {
   }, [location.hash, location.pathname]);
 
   return (
-    <div className="min-h-screen bg-ivory text-ink">
+    <TranslationLayer><div className="min-h-screen bg-ivory text-ink">
       <a href="#main" className="sr-only z-[100] rounded-lg bg-white px-4 py-3 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Zum Inhalt springen</a>
       <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-ivory/95 backdrop-blur-lg">
         <div className="bg-ink text-white">
@@ -98,6 +92,6 @@ export function SiteLayout() {
         <a href={`tel:${PHONE_LINK}`} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-ink font-semibold text-white"><Phone className="h-5 w-5" />Telefon</a>
         <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="flex min-h-12 items-center justify-center gap-2 rounded-xl font-semibold text-brand"><MessageCircle className="h-5 w-5" />WhatsApp</a>
       </div>
-    </div>
+    </div></TranslationLayer>
   );
 }
