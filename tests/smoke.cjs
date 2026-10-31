@@ -76,7 +76,7 @@ async function expectText(page, text, where) {
   // 5. Zahlung erfassen (Teilzahlung)
   const amountInput = page.getByPlaceholder(/3958|Betrag/).first();
   await amountInput.fill("1000");
-  await page.getByRole("button", { name: "Zahlung" }).click();
+  await page.getByRole("button", { name: "Zahlung", exact: true }).click();
   await expectText(page, "2.958,00", "Differenz nach Teilzahlung");
   await shot(page, "zahlung-erfasst");
 
