@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
-import { Download, History, KeyRound, Lock, Plus, Save, Upload, X } from "lucide-react";
+import { Download, KeyRound, Lock, Plus, Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { COMPANY_PRESETS, CatalogItem, CompanySettings, DEFAULT_CATALOG, formatInvoiceNumber, nextInvoiceNumber, todayISO } from "@/accounting/core";
-import { download, exportBackup, hashPin, importBackup, importLegacy, saveSettings, useAccounting } from "@/accounting/store";
+import { CatalogItem, CompanySettings, DEFAULT_CATALOG, formatInvoiceNumber, nextInvoiceNumber, todayISO } from "@/accounting/core";
+import { download, exportBackup, hashPin, importBackup, saveSettings, useAccounting } from "@/accounting/store";
 
 type TextKey = { [K in keyof CompanySettings]: CompanySettings[K] extends string ? K : never }[keyof CompanySettings];
 
@@ -47,20 +47,13 @@ export function SettingsPanel() {
       <Card>
         <CardHeader><CardTitle className="text-lg">Firmendaten (erscheinen auf jeder Rechnung)</CardTitle></CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="flex flex-wrap gap-2 sm:col-span-2 lg:col-span-3">
-            {COMPANY_PRESETS.map((p) => (
-              <button key={p.id} type="button" title={p.hint} onClick={() => { setS({ ...s, ...p.values }); toast.info(`${p.title} eingesetzt – bitte prüfen und speichern.`); }} className={`rounded-lg border px-3 py-2 text-left text-sm ${s.name === p.values.name ? "border-stone-900 bg-stone-900 text-white" : "bg-white hover:bg-stone-50"}`}>
-                <span className="block font-semibold">{p.title}</span><span className="block text-xs opacity-75">{p.hint}</span>
-              </button>
-            ))}
-          </div>
           {COMPANY_FIELDS.map(([key, label]) => (
             <div key={key} className="space-y-1">
               <Label className="text-xs text-stone-500">{label}</Label>
               <Input value={s[key]} onChange={(e) => setS({ ...s, [key]: e.target.value })} />
             </div>
           ))}
-          <p className="text-xs text-stone-500 sm:col-span-2 lg:col-span-3">Sobald die Alpiroz GmbH eingetragen ist und ein eigenes Konto hat: oben auf „Alpiroz GmbH i. G.“ tippen, fehlende Felder (Anschrift, IBAN, Steuernummer, HRB) ausfüllen, „i. G.“ im Namen entfernen und speichern. Bereits geschriebene Rechnungen bleiben unverändert.</p>
+          <p className="text-xs text-stone-500 sm:col-span-2 lg:col-span-3">Alpiroz GmbH ist in Gründung: Bitte Anschrift, Bank, IBAN und Steuernummer eintragen, sobald sie vorliegen. Nach der Eintragung ins Handelsregister „i. G.“ im Namen entfernen und die HRB-Nummer ergänzen.</p>
         </CardContent>
       </Card>
 
@@ -69,7 +62,7 @@ export function SettingsPanel() {
           <CardHeader><CardTitle className="text-lg">Rechnungsnummern & Steuer</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-2 gap-3">
             <div className="space-y-1"><Label className="text-xs text-stone-500">Startnummer</Label><Input type="number" min="1" value={s.startNumber} onChange={(e) => setS({ ...s, startNumber: parseInt(e.target.value) || 1 })} /></div>
-            <div className="space-y-1"><Label className="text-xs text-stone-500">Stellen (032 = 3)</Label><Input type="number" min="1" max="8" value={s.numberPadding} onChange={(e) => setS({ ...s, numberPadding: parseInt(e.target.value) || 1 })} /></div>
+            <div className="space-y-1"><Label className="text-xs text-stone-500">Stellen (001 = 3)</Label><Input type="number" min="1" max="8" value={s.numberPadding} onChange={(e) => setS({ ...s, numberPadding: parseInt(e.target.value) || 1 })} /></div>
             <div className="space-y-1"><Label className="text-xs text-stone-500">USt-Satz %</Label><Input type="number" min="0" value={s.vatRate} onChange={(e) => setS({ ...s, vatRate: parseFloat(e.target.value) || 0 })} /></div>
             <div className="space-y-1"><Label className="text-xs text-stone-500">Zahlungsziel (Tage)</Label><Input type="number" min="0" value={s.dueDays} onChange={(e) => setS({ ...s, dueDays: parseInt(e.target.value) || 0 })} /></div>
             <p className="col-span-2 text-sm text-stone-600">Nächste Rechnung erhält die Nr. <b>{formatInvoiceNumber(next, s.numberPadding)}</b>. Jede neue Rechnung – und jedes neue Datum – bekommt automatisch eine neue, fortlaufende Nummer. Nummern werden nie doppelt vergeben.</p>
@@ -125,13 +118,6 @@ export function SettingsPanel() {
               {s.pinHash && <Button variant="outline" onClick={removePin}>Entfernen</Button>}
             </div>
             <p className="text-xs">PIN vergessen? Browserdaten dieser Seite löschen und die Datensicherung einspielen.</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><History className="h-5 w-5" />Bisherige Rechnungen</CardTitle></CardHeader>
-          <CardContent className="space-y-3 text-sm text-stone-600">
-            <p>Übernimmt Ihre Rechnungen Nr. 032 (2.344,30 €) und Nr. 44 (3.958,00 €) mit Beträgen als offen. Kundennamen/Adressen und bereits erhaltene Zahlungen danach in der jeweiligen Rechnung ergänzen.</p>
-            <Button variant="outline" onClick={() => { const n = importLegacy(); toast.success(n ? `${n} Rechnung(en) übernommen` : "Bereits vorhanden"); }}>032 & 44 übernehmen</Button>
           </CardContent>
         </Card>
       </div>

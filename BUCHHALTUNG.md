@@ -8,15 +8,14 @@ Für Suchmaschinen gesperrt (`noindex` + `robots.txt`).
 | Bereich | Funktion |
 |---|---|
 | **Neue Rechnung** | Screenshot einfügen (Strg+V), hineinziehen, Foto machen oder WhatsApp-Text einfügen → Kunde, Adresse, Verstorbene/r, Art (Bestattung/Beisetzung/Überführung), Zielland und Leistungen mit Preisen werden automatisch zugeordnet. |
-| **Rechnungsnummer** | Wird automatisch fortlaufend vergeben (Start: 045, nach Ihrer letzten Nr. 44). **Neues Datum = neue Rechnungsnummer**: Ändern Sie das Datum einer bestehenden Rechnung, entsteht beim Speichern eine neue Nummer, die alte wird storniert (Zahlungen werden übernommen). Nummern werden nie doppelt vergeben. |
-| **Berechnung** | Inland mit 19 % USt, steuerfreie Auslagen (Sterbeurkunde, amtsärztliche Gebühren, Friedhof) ohne USt, Auslandsleistungen (Fracht, Ambulanz, Konsulat …) standardmäßig umsatzsteuerfrei, Rabatt. Geprüft an Ihren Rechnungen Nr. 032 und Nr. 44. |
+| **Rechnungsnummer** | Wird automatisch fortlaufend vergeben – neuer Nummernkreis der Alpiroz GmbH ab **001**. **Neues Datum = neue Rechnungsnummer**: Ändern Sie das Datum einer bestehenden Rechnung, entsteht beim Speichern eine neue Nummer, die alte wird storniert (Zahlungen werden übernommen). Nummern werden nie doppelt vergeben. |
+| **Berechnung** | Inland mit 19 % USt, steuerfreie Auslagen (Sterbeurkunde, amtsärztliche Gebühren, Friedhof) ohne USt, Auslandsleistungen (Fracht, Ambulanz, Konsulat …) standardmäßig umsatzsteuerfrei, Rabatt. Geprüft an den bisherigen Rechnungsbeispielen. |
 | **Drucken / PDF** | A4-Layout wie Ihre bisherigen Rechnungen: Seite 1 Inland, Seite 2 Ausland mit „EUR GESAMT“. Zusätzlich Leistungsdatum (Pflichtangabe § 14 UStG) und Fälligkeit. |
 | **Zahlungseingänge** | Zahlungen (Überweisung, Bar, EC, Versicherung) je Rechnung erfassen. Oder Kontoauszug als CSV importieren → Eingänge werden automatisch der richtigen Rechnung zugeordnet (Rechnungs-Nr., Name, Betrag). |
 | **Differenzen** | Übersicht mit berechnet / eingegangen / offene Differenz / überfällig, Monatsdiagramm, Filter (offen, teilbezahlt, überfällig, bezahlt, überzahlt, storniert). |
 | **Gewinn pro Auftrag** | Eigene Kosten (Luftfracht, Sarg-Einkauf, Friedhof, Partner im Ausland) je Rechnung eintragen → Gewinn und Marge; Jahresgewinn in der Übersicht. Erscheint nicht auf der Rechnung. |
 | **Versand** | Rechnung per WhatsApp (Nachricht mit Betrag, IBAN, Rechnungs-Nr.) oder E-Mail vorbereiten. |
 | **Mahnwesen** | Zahlungserinnerung → 1. Mahnung → letzte Mahnung als druckbares Schreiben, mit Verlauf; Erinnerung auch per WhatsApp. |
-| **Startbestand** | Ein Klick übernimmt Nummern und Beträge der bisherigen Rechnungen 032 und 44 (Kundendaten in der App ergänzen – sie stehen bewusst nicht im Code). |
 | **PIN-Sperre** | Optional unter Einstellungen (4–8 Ziffern). Schützt vor neugierigen Blicken, ersetzt keine Gerätesperre. |
 | **Export** | CSV für den Steuerberater, JSON-Datensicherung (Import auf anderem Gerät möglich). |
 
@@ -27,9 +26,8 @@ Für Suchmaschinen gesperrt (`noindex` + `robots.txt`).
 
 ## Wichtig
 
+* Voreingestellt ist die neue Firma **Alpiroz GmbH i. G.** (Sitz Köln). Solange Anschrift, Bank, IBAN oder Steuernummer fehlen, zeigt die App oben einen gelben Hinweis. Diese Daten unter *Einstellungen* eintragen, sobald sie vorliegen; nach der Handelsregister-Eintragung „i. G.“ entfernen und die HRB-Nummer ergänzen.
 * Die Daten liegen **lokal im Browser** des jeweiligen Geräts. Regelmäßig *Einstellungen → Sicherung herunterladen*.
-* Firmen: Voreingestellt ist die **Alp GmbH** (Plettenberg). Für die neue **Alpiroz GmbH i. G.** (Sitz Köln) gibt es unter *Einstellungen* einen Knopf – Anschrift, IBAN, Steuernummer und HRB nach der Eintragung ergänzen.
-* Auf Rechnung 44 steht auf Seite 1 die IBAN ohne Prüfziffer („DE 4506 …“), auf Seite 2 korrekt „DE88 4506 0009 0056 7701 00“ – die App verwendet die vollständige IBAN. Rechnung 032 nennt noch Sparkasse Hagen und eine andere Steuernummer (302/5701/1528); voreingestellt sind die neueren Daten (Märkische Bank, 312/5003/2420).
 * Steuerliche Einordnung (z. B. Steuerfreiheit der Auslandsleistungen) bitte einmal mit dem Steuerberater abstimmen – alles ist in der App umstellbar.
 
 ## Entwicklung

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { CompanySettings, Invoice, Position, addDays, calcTotals, formatAmount, formatDateDE, formatInvoiceNumber } from "@/accounting/core";
+import { CompanySettings, Invoice, Position, addDays, calcTotals, missingCompanyFields, formatAmount, formatDateDE, formatInvoiceNumber } from "@/accounting/core";
 import { useAccounting } from "@/accounting/store";
 
 const kindPhrase: Record<Invoice["kind"], string> = { Bestattung: "Für die Bestattung von", Beisetzung: "Für die Beisetzung von", Überführung: "Für die Überführung von" };
@@ -113,6 +113,7 @@ export function InvoicePrint() {
         <button onClick={() => window.print()} className="rounded-lg bg-stone-900 px-4 py-2 font-semibold text-white">Drucken / als PDF speichern</button>
         <Link to={`/buchhaltung/rechnung/${inv.id}`} className="rounded-lg bg-white px-4 py-2 font-semibold">Zurück zur Rechnung</Link>
         {inv.cancelled && <span className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white">STORNIERT</span>}
+        {missingCompanyFields(s).length > 0 && <Link to="/buchhaltung/einstellungen" className="rounded-lg bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-900">Fehlt noch: {missingCompanyFields(s).join(", ")}</Link>}
       </div>
 
       <section className="sheet relative mx-auto flex min-h-[297mm] w-[210mm] max-w-full flex-col bg-white px-[18mm] py-[14mm] text-stone-900 shadow-xl" style={{ breakAfter: hasAbroad ? "page" : "auto" }}>

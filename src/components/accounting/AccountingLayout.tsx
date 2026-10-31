@@ -2,7 +2,8 @@ import { ReactNode, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FilePlus2, FileText, Landmark, LayoutDashboard, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InvoiceStatus } from "@/accounting/core";
+import { InvoiceStatus, missingCompanyFields } from "@/accounting/core";
+import { useAccounting } from "@/accounting/store";
 
 const links = [
   { to: "/buchhaltung", label: "Übersicht", icon: LayoutDashboard, end: true },
@@ -13,6 +14,8 @@ const links = [
 
 export function AccountingLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const { settings } = useAccounting();
+  const missing = missingCompanyFields(settings);
   useEffect(() => {
     // Interner Bereich: nicht in Suchmaschinen
     const meta = document.createElement("meta");
@@ -30,7 +33,7 @@ export function AccountingLayout({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3">
           <div className="mr-auto">
             <p className="font-serif text-lg font-semibold leading-tight">Mezopotamya Buchhaltung</p>
-            <p className="text-xs text-stone-500">Alp GmbH · Rechnungen & Zahlungen</p>
+            <p className="text-xs text-stone-500">{settings.name} · Rechnungen & Zahlungen</p>
           </div>
           <Button onClick={() => navigate("/buchhaltung/neu")} className="gap-2"><FilePlus2 className="h-4 w-4" />Neue Rechnung</Button>
         </div>
@@ -42,7 +45,14 @@ export function AccountingLayout({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 py-6">
+        {missing.length > 0 && (
+          <button onClick={() => navigate("/buchhaltung/einstellungen")} className="mb-5 w-full rounded-lg border border-amber-300 bg-amber-50 p-3 text-left text-sm text-amber-900 print:hidden">
+            <b>{settings.name}:</b> Für gültige Rechnungen fehlen noch: {missing.join(", ")}. Hier tippen und in den Einstellungen eintragen, sobald die Daten vorliegen.
+          </button>
+        )}
+        {children}
+      </main>
     </div>
   );
 }

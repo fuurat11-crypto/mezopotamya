@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import {
   DEFAULT_CATALOG, DEFAULT_SETTINGS, applyExtracted, calcTotals, emptyInvoice, formatInvoiceNumber,
   invoiceStatus, matchTransaction, needsNewNumber, nextInvoiceNumber, parseAmount, parseBankCSV,
-  parseInvoiceText, summarize, type Invoice, calcProfit, legacyInvoices, nextReminderLevel, shareText, whatsappNumber,
+  parseInvoiceText, summarize, type Invoice, calcProfit, missingCompanyFields, nextReminderLevel, shareText, whatsappNumber,
 } from "../src/accounting/core.ts";
 
 function invoiceWith(prices: Record<string, number>, extra: Partial<Invoice> = {}): Invoice {
@@ -120,14 +120,8 @@ test("Bank-CSV (Sparkasse-Format) wird gelesen und der Rechnung zugeordnet", () 
   assert.equal(matchTransaction(txs[1], [inv]), undefined);
 });
 
-test("Startbestand: Rechnungen 032 und 44 mit richtigen Beträgen, nächste Nr. 45", () => {
-  const legacy = legacyInvoices(DEFAULT_SETTINGS);
-  assert.deepEqual(legacy.map((i) => [i.number, calcTotals(i).total]), [[32, 2344.3], [44, 3958]]);
-  assert.equal(nextInvoiceNumber(legacy, DEFAULT_SETTINGS.startNumber), 45);
-});
-
 test("Gewinn pro Auftrag: Nettoerlös minus eigene Kosten", () => {
-  const inv = legacyInvoices(DEFAULT_SETTINGS)[1];
+  const inv = invoiceWith({ transport: 200, service: 100, coffin: 900, freight: 750, ambulance: 1730, consulate: 50 });
   inv.expenses = [{ id: "e1", date: "2026-10-30", label: "Luftfracht Turkish Cargo", amount: 600 }, { id: "e2", date: "2026-10-30", label: "Sarg Einkauf", amount: 400 }];
   const p = calcProfit(inv);
   assert.equal(p.revenueNet, 3730);
@@ -137,14 +131,23 @@ test("Gewinn pro Auftrag: Nettoerlös minus eigene Kosten", () => {
 });
 
 test("Mahnstufen, WhatsApp-Nummer und Nachrichtentext", () => {
-  const inv = legacyInvoices(DEFAULT_SETTINGS)[0];
+  const inv = invoiceWith({ transport: 320, consult: 50, dressing: 100, service: 150, imam: 150, coffin: 1200 }, { number: 32 });
   assert.equal(nextReminderLevel(inv), 1);
   inv.reminders = [{ date: "2026-10-20", level: 1 }];
   assert.equal(nextReminderLevel(inv), 2);
   assert.equal(whatsappNumber("0176 81009006"), "4917681009006");
   assert.equal(whatsappNumber("+90 532 111 22 33"), "905321112233");
-  const text = shareText(inv, DEFAULT_SETTINGS);
+  const text = shareText(inv, { ...DEFAULT_SETTINGS, iban: "DE00 1234 5678 9000 0000 00" });
   assert.match(text, /Rechnung Nr\. 032/);
   assert.match(text, /2\.344,30/);
-  assert.match(text, /DE88 4506/);
+  assert.match(text, /DE00 1234/);
+  assert.match(text, /Alpiroz GmbH/);
+});
+
+test("Neue Firma Alpiroz: Voreinstellung, Nummernkreis ab 001, fehlende Pflichtangaben werden gemeldet", () => {
+  assert.equal(DEFAULT_SETTINGS.name, "Alpiroz GmbH i. G.");
+  assert.equal(DEFAULT_SETTINGS.city, "Köln");
+  assert.equal(formatInvoiceNumber(nextInvoiceNumber([], DEFAULT_SETTINGS.startNumber), DEFAULT_SETTINGS.numberPadding), "001");
+  assert.deepEqual(missingCompanyFields(DEFAULT_SETTINGS), ["Anschrift", "PLZ", "Bank", "IBAN", "Steuernummer"]);
+  assert.deepEqual(missingCompanyFields({ ...DEFAULT_SETTINGS, street: "Musterweg 1", zip: "50667", bankName: "Bank", iban: "DE00", taxNumber: "1/2/3" }), []);
 });

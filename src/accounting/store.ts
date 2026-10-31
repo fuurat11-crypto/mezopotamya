@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { CompanySettings, DEFAULT_CATALOG, DEFAULT_SETTINGS, Invoice, legacyInvoices } from "./core";
+import { CompanySettings, DEFAULT_CATALOG, DEFAULT_SETTINGS, Invoice } from "./core";
 
 const KEY = "mezopotamya-buchhaltung-v1";
 
@@ -101,18 +101,6 @@ export function download(filename: string, content: string, type = "text/plain;c
   a.download = filename;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-/** Übernimmt die bisherigen Rechnungen (032, 44), sofern ihre Nummern noch frei sind. */
-export function importLegacy(): number {
-  let added = 0;
-  setData((d) => {
-    const used = new Set(d.invoices.map((i) => i.number));
-    const fresh = legacyInvoices(d.settings).filter((i) => !used.has(i.number));
-    added = fresh.length;
-    return { ...d, invoices: [...d.invoices, ...fresh] };
-  });
-  return added;
 }
 
 export async function hashPin(pin: string): Promise<string> {

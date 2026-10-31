@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertTriangle, ArrowDownToLine, FileText, History, PiggyBank, Scale } from "lucide-react";
-import { toast } from "sonner";
+import { AlertTriangle, ArrowDownToLine, FileText, PiggyBank, Scale } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { calcTotals, formatDateDE, formatEUR, formatInvoiceNumber, invoiceStatus, monthlySeries, summarize } from "@/accounting/core";
-import { importLegacy, useAccounting } from "@/accounting/store";
+import { useAccounting } from "@/accounting/store";
 import { StatusBadge } from "./AccountingLayout";
 
 function Kpi({ label, value, hint, icon: Icon, tone }: { label: string; value: string; hint?: string; icon: typeof FileText; tone: string }) {
@@ -46,7 +45,6 @@ export function Dashboard() {
           <p className="text-stone-600">Erstellen Sie Ihre erste Rechnung. Ein Screenshot (z. B. WhatsApp) genügt – die App ordnet Kunde, Verstorbene/n, Zielland und Leistungen automatisch zu. Jede neue Rechnung bekommt automatisch die nächste Nummer (Start: {formatInvoiceNumber(settings.startNumber, settings.numberPadding)}).</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link to="/buchhaltung/neu" className="inline-flex rounded-lg bg-stone-900 px-5 py-3 font-semibold text-white">Erste Rechnung erstellen</Link>
-            <button onClick={() => { const n = importLegacy(); toast.success(`${n} bisherige Rechnung(en) übernommen`); }} className="inline-flex items-center gap-2 rounded-lg border bg-white px-5 py-3 font-semibold"><History className="h-4 w-4" />Bisherige Rechnungen 032 & 44 übernehmen</button>
           </div>
         </CardContent>
       </Card>

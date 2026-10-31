@@ -135,41 +135,26 @@ export const DEFAULT_CATALOG: CatalogItem[] = [
   { id: "ticket", section: "abroad", label: "Ticket Hin & Zurück", defaultPrice: 0, keywords: ["ticket", "begleitperson", "hin & zurück", "hin und zurück", "bilet"] },
 ];
 
-/** Firmenprofile: bestehende Alp GmbH und die neue Alpiroz GmbH (in Gründung, Sitz Köln) */
-export const COMPANY_PRESETS: { id: string; title: string; hint: string; values: Partial<CompanySettings> }[] = [
-  {
-    id: "alp",
-    title: "Alp GmbH (aktuell)",
-    hint: "Bisherige Firma mit Märkischer Bank und Steuernummer 312/5003/2420.",
-    values: { name: "Alp GmbH", street: "Wieckmerther Weg 11", zip: "58840", city: "Plettenberg", bankName: "Märkische Bank", iban: "DE88 4506 0009 0056 7701 00", bic: "", taxNumber: "312/5003/2420", vatId: "", registerCourt: "", registerNumber: "" },
-  },
-  {
-    id: "alpiroz",
-    title: "Alpiroz GmbH i. G. (neue Firma)",
-    hint: "Neue Firma in Gründung, Sitz Köln. Anschrift, Bankverbindung, Steuernummer und HRB nachtragen, sobald sie vorliegen.",
-    values: { name: "Alpiroz GmbH i. G.", street: "", zip: "", city: "Köln", bankName: "", iban: "", bic: "", taxNumber: "", vatId: "", registerCourt: "Amtsgericht Köln", registerNumber: "" },
-  },
-];
-
 export const DEFAULT_SETTINGS: CompanySettings = {
-  name: "Alp GmbH",
+  // Neue Firma: Alpiroz GmbH in Gründung, Sitz Köln (laut Gesellschaftsvertrag)
+  name: "Alpiroz GmbH i. G.",
   brand: "Mezopotamya Cenaze",
-  street: "Wieckmerther Weg 11",
-  zip: "58840",
-  city: "Plettenberg",
+  street: "",
+  zip: "",
+  city: "Köln",
   mobile: "0173/3242196",
   phone: "02331/4733886",
   fax: "02331/7368851",
   email: "alp-gmbh@outlook.de",
-  bankName: "Märkische Bank",
-  iban: "DE88 4506 0009 0056 7701 00",
+  bankName: "",
+  iban: "",
   bic: "",
-  taxNumber: "312/5003/2420",
+  taxNumber: "",
   vatId: "",
   managingDirector: "",
-  registerCourt: "",
+  registerCourt: "Amtsgericht Köln",
   registerNumber: "",
-  startNumber: 45,
+  startNumber: 1,
   numberPadding: 3,
   vatRate: 19,
   dueDays: 14,
@@ -187,6 +172,12 @@ const COUNTRY_ALIASES: Record<string, string> = {
   iran: "Iran", urmia: "Iran", mahabad: "Iran", libanon: "Libanon", lebanon: "Libanon",
   diyarbakir: "Türkei", diyarbakır: "Türkei", amed: "Türkei", mardin: "Türkei", batman: "Türkei", şırnak: "Türkei", sirnak: "Türkei", van: "Türkei", hakkari: "Türkei", urfa: "Türkei", şanlıurfa: "Türkei", istanbul: "Türkei", ankara: "Türkei", midyat: "Türkei", nusaybin: "Türkei", cizre: "Türkei", siirt: "Türkei", bingöl: "Türkei", muş: "Türkei", tunceli: "Türkei", dersim: "Türkei", elazığ: "Türkei", malatya: "Türkei", adıyaman: "Türkei", kars: "Türkei", ağrı: "Türkei", bitlis: "Türkei", maraş: "Türkei",
 };
+
+/** Pflichtangaben, die auf der Rechnung noch fehlen (z. B. solange die Firma in Gründung ist) */
+export function missingCompanyFields(s: CompanySettings): string[] {
+  const checks: [keyof CompanySettings, string][] = [["street", "Anschrift"], ["zip", "PLZ"], ["bankName", "Bank"], ["iban", "IBAN"], ["taxNumber", "Steuernummer"]];
+  return checks.filter(([k]) => !String(s[k] || "").trim()).map(([, label]) => label);
+}
 
 // ---------------------------------------------------------------- Hilfsfunktionen
 
@@ -785,22 +776,4 @@ export function whatsappNumber(phone?: string): string {
   else if (d.startsWith("00")) d = d.slice(2);
   else if (d.startsWith("0")) d = "49" + d.slice(1);
   return d;
-}
-
-// ---------------------------------------------------------------- Startbestand (bisherige Rechnungen)
-
-/** Die beiden bisherigen Rechnungen aus den PDFs, damit Übersicht und Nummernkreis stimmen. */
-export function legacyInvoices(settings: CompanySettings): Invoice[] {
-  const make = (number: number, date: string, kind: InvoiceKind, customer: Customer, deceased: string, prices: Record<string, number>, destination = ""): Invoice => {
-    const base = emptyInvoice(settings, [], date);
-    const fill = (list: Position[]) => list.map((p) => ({ ...p, amount: prices[p.catalogId] ?? 0 }));
-    return { ...base, id: `legacy-${number}`, number, date, serviceDate: date, kind, customer, deceased, destination, inland: fill(base.inland), abroad: fill(base.abroad), vatRate: 19, notes: "Aus bisheriger Rechnung (PDF) übernommen", createdAt: `${date}T12:00:00.000Z` };
-  };
-  return [
-    // Keine Kundendaten im Quellcode: Namen/Adressen trägt der Nutzer in der App nach
-    make(32, "2026-09-28", "Beisetzung", { name: "Kunde aus Rechnung 032 (bitte ergänzen)", street: "", zip: "", city: "" }, "",
-      { transport: 320, consult: 50, dressing: 100, service: 150, imam: 150, coffin: 1200 }),
-    make(44, "2026-10-31", "Überführung", { name: "Kunde aus Rechnung 44 (bitte ergänzen)", street: "", zip: "", city: "" }, "",
-      { transport: 200, service: 100, coffin: 900, freight: 750, ambulance: 1730, consulate: 50 }),
-  ];
 }
