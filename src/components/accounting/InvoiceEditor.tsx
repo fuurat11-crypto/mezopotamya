@@ -32,9 +32,10 @@ function PositionsTable({ title, positions, onChange, showTaxFree }: { title: st
       </CardHeader>
       <CardContent className="space-y-1.5">
         {positions.map((p, i) => (
-          <div key={p.id} className={`flex items-center gap-2 rounded-lg px-2 py-1 ${p.amount > 0 ? "bg-amber-50" : ""}`}>
+          <div key={p.id} className={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg px-2 py-1 sm:flex-nowrap ${p.amount > 0 ? "bg-amber-50" : ""}`}>
             <span className="w-6 text-right text-xs text-stone-400">{i + 1}.</span>
-            <Input value={p.label} onChange={(e) => update(p.id, { label: e.target.value })} className="h-9 flex-1 border-transparent bg-transparent px-2 shadow-none hover:border-stone-200 focus:bg-white" placeholder="Bezeichnung" />
+            <Input value={p.label} onChange={(e) => update(p.id, { label: e.target.value })} className="h-9 min-w-0 flex-1 basis-[calc(100%-2rem)] border-transparent bg-transparent px-2 shadow-none sm:basis-0 hover:border-stone-200 focus:bg-white" placeholder="Bezeichnung" />
+            <div className="ml-8 flex flex-1 items-center justify-end gap-2 sm:ml-0 sm:flex-none">
             {showTaxFree && (
               <label className="flex items-center gap-1 text-xs text-stone-500" title="Steuerfreie Auslage (keine USt)">
                 <input type="checkbox" checked={!!p.taxFree} onChange={(e) => update(p.id, { taxFree: e.target.checked })} />frei
@@ -45,6 +46,7 @@ function PositionsTable({ title, positions, onChange, showTaxFree }: { title: st
               <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-stone-400">€</span>
             </div>
             <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-stone-400 hover:text-red-600" title="Entfernen" onClick={() => onChange(positions.filter((x) => x.id !== p.id))}><X className="h-4 w-4" /></Button>
+            </div>
           </div>
         ))}
       </CardContent>

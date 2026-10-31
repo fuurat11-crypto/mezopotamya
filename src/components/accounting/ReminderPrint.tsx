@@ -35,7 +35,7 @@ export function ReminderPrint() {
       </div>
       <section className="sheet mx-auto flex min-h-[297mm] w-[210mm] max-w-full flex-col bg-white px-[18mm] py-[14mm] text-[13px] text-stone-900 shadow-xl">
         <p className="text-[22px] font-bold">{s.name} <span className="font-serif font-semibold text-[#8a6a4f]">{s.brand}</span></p>
-        <p className="mt-6 text-[10px] text-stone-500 underline">{s.name} · {s.street} · {s.zip} {s.city}</p>
+        <p className="mt-6 text-[10px] text-stone-500 underline">{[s.name, s.street, `${s.zip} ${s.city}`.trim()].filter(Boolean).join(" · ")}</p>
         <div className="mt-2 flex justify-between">
           <div className="leading-snug"><p>{inv.customer.name}</p><p>{inv.customer.street}</p><p>{inv.customer.zip} {inv.customer.city}</p></div>
           <p>{s.city}, {formatDateDE(today)}</p>
@@ -55,7 +55,7 @@ export function ReminderPrint() {
         <div className="mt-auto grid grid-cols-3 gap-4 border-t border-stone-300 pt-2 text-[10.5px] text-stone-600">
           <div><p className="font-semibold text-stone-800">Bankverbindung</p><p>{s.bankName}</p><p>IBAN: {s.iban}</p>{s.bic && <p>BIC: {s.bic}</p>}</div>
           <div><p className="font-semibold text-stone-800">Kontakt</p><p>Mobil: {s.mobile}</p><p>Tel: {s.phone}</p><p>{s.email}</p></div>
-          <div><p className="font-semibold text-stone-800">{s.name}</p><p>{s.street}, {s.zip} {s.city}</p>{s.managingDirector && <p>GF: {s.managingDirector}</p>}{s.taxNumber && <p>St.-Nr.: {s.taxNumber}</p>}</div>
+          <div><p className="font-semibold text-stone-800">{s.name}</p><p>{[s.street, `${s.zip} ${s.city}`.trim()].filter(Boolean).join(", ")}</p>{s.managingDirector && <p>GF: {s.managingDirector}</p>}{s.taxNumber && <p>St.-Nr.: {s.taxNumber}</p>}</div>
         </div>
       </section>
     </div>

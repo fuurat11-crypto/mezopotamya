@@ -14,7 +14,7 @@ function Header({ s, inv }: { s: CompanySettings; inv: Invoice }) {
         </div>
         <img src="/favicon.svg" alt="" className="h-14 w-14 opacity-90" />
       </div>
-      <p className="mt-6 text-[10px] text-stone-500 underline">{s.name} · {s.street} · {s.zip} {s.city}</p>
+      <p className="mt-6 text-[10px] text-stone-500 underline">{[s.name, s.street, `${s.zip} ${s.city}`.trim()].filter(Boolean).join(" · ")}</p>
       <div className="mt-2 flex justify-between gap-6">
         <div className="text-[13px] leading-snug">
           <p>{inv.customer.name}</p>
@@ -79,7 +79,7 @@ function Footer({ s, inv }: { s: CompanySettings; inv: Invoice }) {
         </div>
         <div>
           <p className="font-semibold text-stone-800">{s.name}</p>
-          <p>{s.street}, {s.zip} {s.city}</p>
+          <p>{[s.street, `${s.zip} ${s.city}`.trim()].filter(Boolean).join(", ")}</p>
           {s.managingDirector && <p>Geschäftsführung: {s.managingDirector}</p>}
           {(s.registerCourt || s.registerNumber) && <p>{s.registerCourt} {s.registerNumber}</p>}
           {s.taxNumber && <p>Steuernummer: {s.taxNumber}</p>}
