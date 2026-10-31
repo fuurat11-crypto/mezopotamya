@@ -74,11 +74,23 @@ async function expectText(page, text, where) {
   await shot(page, "rechnung-gespeichert");
 
   // 5. Zahlung erfassen (Teilzahlung)
-  const amountInput = page.getByPlaceholder(/3958|Betrag/).first();
-  await amountInput.fill("1000");
+  // wie ein Mensch tippen (Feld antippen, dann Ziffern eingeben)
+  const amountInput = page.getByPlaceholder(/^Rest /).first();
+  await amountInput.click();
+  await amountInput.pressSequentially("1.000");
   await page.getByRole("button", { name: "Zahlung", exact: true }).click();
   await expectText(page, "2.958,00", "Differenz nach Teilzahlung");
   await shot(page, "zahlung-erfasst");
+
+  // Restzahlung: Feld leer lassen -> Restbetrag wird gebucht
+  await page.getByRole("button", { name: "Zahlung", exact: true }).click();
+  try {
+    await page.getByText("bezahlt", { exact: true }).first().waitFor({ timeout: 10000 });
+    console.log("✓ Status nach Restzahlung: bezahlt");
+  } catch { errors.push("Status nach Restzahlung ist nicht „bezahlt“"); }
+  const overpaid = await page.getByText("39.581").count();
+  if (overpaid) errors.push("Falscher Zahlungsbetrag gebucht");
+  await shot(page, "restzahlung-bezahlt");
 
   // 6. Druckansicht
   const url = page.url();
