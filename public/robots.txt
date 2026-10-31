@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /buchhaltung
 
 Sitemap: https://www.mezopotamya-bestattungen.de/sitemap.xml

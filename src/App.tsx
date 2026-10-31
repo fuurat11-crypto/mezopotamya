@@ -8,6 +8,7 @@ import { I18nProvider } from "./i18n/I18n";
 import Index from "./pages/Index";
 import { AboutPage, ContactPage, CountryPage, EmergencyPage, FaqPage, GuidePage, IslamicPage, KurdishPage, LegalPage, ServiceDetailPage, ServicesPage, TransfersPage } from "./pages/ContentPages";
 import NotFound from "./pages/NotFound";
+import Buchhaltung from "./pages/Buchhaltung";
 
 const queryClient = new QueryClient();
 const pages = [
@@ -31,7 +32,7 @@ const pages = [
 ];
 
 function LocalizedRoutes() {
-  return <Routes>{["/", "/tr", "/ku"].map((prefix) => <Route key={prefix} path={prefix} element={<SiteLayout />}>{pages.map((page, index) => page.index ? <Route key={index} index element={page.element} /> : <Route key={page.path} path={page.path} element={page.element} />)}</Route>)}</Routes>;
+  return <Routes><Route path="/buchhaltung/*" element={<Buchhaltung />} />{["/", "/tr", "/ku"].map((prefix) => <Route key={prefix} path={prefix} element={<SiteLayout />}>{pages.map((page, index) => page.index ? <Route key={index} index element={page.element} /> : <Route key={page.path} path={page.path} element={page.element} />)}</Route>)}</Routes>;
 }
 
 const App = () => (
