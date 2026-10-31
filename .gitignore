@@ -29,3 +29,5 @@ dist-ssr
 /playwright/.cache/
 .last-run.json
 .dyad/
+
+smoke-screenshots/

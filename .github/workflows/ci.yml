@@ -1,0 +1,59 @@
+name: Build & Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Abhängigkeiten installieren
+        run: pnpm install --frozen-lockfile
+
+      - name: Unit-Tests (Berechnung, Nummern, Erkennung, Bank-Abgleich)
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Browser installieren
+        run: |
+          npm install -g playwright@1.48.2
+          npx playwright@1.48.2 install --with-deps chromium
+
+      - name: Browser-Test der Buchhaltung
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          npx -y wait-on@8.0.1 http://localhost:4173 --timeout 60000
+          NODE_PATH="$(npm root -g)" node tests/smoke.cjs http://localhost:4173
+
+      - name: Screenshots hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: smoke-screenshots/
+          if-no-files-found: ignore
+
+      - name: Fertige Website hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-dist
+          path: dist/
