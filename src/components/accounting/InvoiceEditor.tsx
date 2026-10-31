@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   COUNTRIES, Expense, Extracted, Invoice, InvoiceKind, Payment, PaymentMethod, Position, REMINDER_TITLES, addDays, applyExtracted, calcProfit, calcTotals,
-  emptyInvoice, formatDateDE, formatEUR, formatInvoiceNumber, invoiceStatus, needsNewNumber, nextInvoiceNumber, nextReminderLevel, round2, shareText, todayISO, uid, whatsappNumber,
+  emptyInvoice, formatDateDE, formatEUR, parseAmount, formatInvoiceNumber, invoiceStatus, needsNewNumber, nextInvoiceNumber, nextReminderLevel, round2, shareText, todayISO, uid, whatsappNumber,
 } from "@/accounting/core";
 import { deleteInvoice, saveInvoice, setData, useAccounting } from "@/accounting/store";
 import { StatusBadge } from "./AccountingLayout";
@@ -32,9 +32,10 @@ function PositionsTable({ title, positions, onChange, showTaxFree }: { title: st
       </CardHeader>
       <CardContent className="space-y-1.5">
         {positions.map((p, i) => (
-          <div key={p.id} className={`flex items-center gap-2 rounded-lg px-2 py-1 ${p.amount > 0 ? "bg-amber-50" : ""}`}>
+          <div key={p.id} className={`flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg px-2 py-1 sm:flex-nowrap ${p.amount > 0 ? "bg-amber-50" : ""}`}>
             <span className="w-6 text-right text-xs text-stone-400">{i + 1}.</span>
-            <Input value={p.label} onChange={(e) => update(p.id, { label: e.target.value })} className="h-9 flex-1 border-transparent bg-transparent px-2 shadow-none hover:border-stone-200 focus:bg-white" placeholder="Bezeichnung" />
+            <Input value={p.label} onChange={(e) => update(p.id, { label: e.target.value })} className="h-9 min-w-0 flex-1 basis-[calc(100%-2rem)] border-transparent bg-transparent px-2 shadow-none sm:basis-0 hover:border-stone-200 focus:bg-white" placeholder="Bezeichnung" />
+            <div className="ml-8 flex flex-1 items-center justify-end gap-2 sm:ml-0 sm:flex-none">
             {showTaxFree && (
               <label className="flex items-center gap-1 text-xs text-stone-500" title="Steuerfreie Auslage (keine USt)">
                 <input type="checkbox" checked={!!p.taxFree} onChange={(e) => update(p.id, { taxFree: e.target.checked })} />frei
@@ -45,6 +46,7 @@ function PositionsTable({ title, positions, onChange, showTaxFree }: { title: st
               <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-stone-400">€</span>
             </div>
             <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-stone-400 hover:text-red-600" title="Entfernen" onClick={() => onChange(positions.filter((x) => x.id !== p.id))}><X className="h-4 w-4" /></Button>
+            </div>
           </div>
         ))}
       </CardContent>
@@ -115,7 +117,8 @@ export function InvoiceEditor() {
   // ------------------------------------------------ Zahlungen
   const [payment, setPayment] = useState<{ date: string; amount: string; method: PaymentMethod; note: string }>({ date: todayISO(), amount: "", method: "Überweisung", note: "" });
   const addPayment = () => {
-    const amount = round2(parseFloat(payment.amount.replace(",", ".")) || 0);
+    // Leeres Feld = Restbetrag buchen; deutsche Schreibweise (1.000,50) wird erkannt
+    const amount = round2(payment.amount.trim() ? parseAmount(payment.amount) : Math.max(0, t.open));
     if (!amount) return toast.error("Betrag eingeben.");
     const p: Payment = { id: uid(), date: payment.date, amount, method: payment.method, note: payment.note || undefined };
     const next = { ...inv, payments: [...inv.payments, p] };
@@ -155,7 +158,7 @@ export function InvoiceEditor() {
     if (original) saveInvoice({ ...original, expenses });
   };
   const addExpense = () => {
-    const amount = round2(parseFloat(expense.amount.replace(",", ".")) || 0);
+    const amount = round2(parseAmount(expense.amount));
     if (!expense.label.trim() || !amount) return toast.error("Bezeichnung und Betrag eingeben.");
     persistExpenses([...(inv.expenses || []), { id: uid(), date: todayISO(), label: expense.label.trim(), amount }]);
     setExpense({ label: "", amount: "" });
@@ -299,7 +302,7 @@ export function InvoiceEditor() {
               {!inv.cancelled && (
                 <div className="grid grid-cols-2 gap-2 rounded-lg border p-3 sm:grid-cols-4">
                   <Input type="date" value={payment.date} onChange={(e) => setPayment({ ...payment, date: e.target.value })} />
-                  <Input inputMode="decimal" placeholder={t.open > 0 ? String(t.open).replace(".", ",") : "Betrag"} value={payment.amount} onChange={(e) => setPayment({ ...payment, amount: e.target.value })} onFocus={() => !payment.amount && t.open > 0 && setPayment({ ...payment, amount: String(t.open).replace(".", ",") })} />
+                  <Input inputMode="decimal" placeholder={t.open > 0 ? `Rest ${formatEUR(t.open)}` : "Betrag"} value={payment.amount} onChange={(e) => setPayment({ ...payment, amount: e.target.value })} />
                   <select className="h-10 rounded-md border bg-white px-2" value={payment.method} onChange={(e) => setPayment({ ...payment, method: e.target.value as PaymentMethod })}>{METHODS.map((m) => <option key={m}>{m}</option>)}</select>
                   <Button onClick={addPayment} className="gap-1"><Plus className="h-4 w-4" />Zahlung</Button>
                   <Input className="col-span-2 sm:col-span-4" placeholder="Notiz (optional), z. B. Anzahlung, Versicherung …" value={payment.note} onChange={(e) => setPayment({ ...payment, note: e.target.value })} />
